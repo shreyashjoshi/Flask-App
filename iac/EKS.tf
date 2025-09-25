@@ -1,9 +1,9 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 21.0"
+  version = "> 21.0"
 
   name               = "my-cluster"
-  kubernetes_version = "1.33"
+  kubernetes_version = "1.30"
 
   addons = {
     coredns                = {}
