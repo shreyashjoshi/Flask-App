@@ -43,12 +43,3 @@ output "config_bucket_name" {
   value       = aws_s3_bucket.config_bucket.bucket
 }
 
-output "config_bucket_arn" {
-  description = "ARN of the S3 bucket for storing config files"
-  value       = aws_s3_bucket.config_bucket.arn
-}
-
-output "config_bucket_policy_arn" {
-  description = "ARN of the IAM policy for config bucket access"
-  value       = aws_iam_policy.config_bucket_policy.arn
-}
