@@ -14,13 +14,10 @@ data "aws_region" "current" {}
 
 # S3 bucket for config storage
 resource "aws_s3_bucket" "config_bucket" {
-  bucket = "${var.project_name}-config-${var.environment}-${random_id.bucket_suffix.hex}"
+  bucket = "app-config-${random_id.bucket_suffix.hex}"
 
   tags = {
-    Name        = "${var.project_name}-config-${var.environment}"
-    Environment = var.environment
     Purpose     = "config-storage"
-    Project     = var.project_name
     Terraform   = "true"
   }
 }
@@ -75,38 +72,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "config_bucket_lifecycle" {
   }
 }
 
-# IAM policy for config bucket access
-resource "aws_iam_policy" "config_bucket_policy" {
-  name        = "${var.project_name}-config-bucket-policy-${var.environment}"
-  description = "Policy for accessing config S3 bucket"
 
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
-          "s3:ListBucket"
-        ]
-        Resource = [
-          aws_s3_bucket.config_bucket.arn,
-          "${aws_s3_bucket.config_bucket.arn}/*"
-        ]
-      }
-    ]
-  })
-
-  tags = {
-    Name        = "${var.project_name}-config-bucket-policy-${var.environment}"
-    Environment = var.environment
-    Purpose     = "config-bucket-access"
-    Project     = var.project_name
-    Terraform   = "true"
-  }
-}
 
 
 
