@@ -37,9 +37,9 @@ output "cluster_arn" {
   value       = module.eks.cluster_arn
 }
 
-# S3 Bucket Outputs
-output "config_bucket_name" {
-  description = "Name of the S3 bucket for storing config files"
-  value       = aws_s3_bucket.config_bucket.bucket
-}
+# # S3 Bucket Outputs
+# output "config_bucket_name" {
+#   description = "Name of the S3 bucket for storing config files"
+#   value       = aws_s3_bucket.config_bucket.bucket
+# }
 
