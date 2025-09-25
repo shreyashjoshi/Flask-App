@@ -23,18 +23,18 @@ on:
         - prod
 
 env:
-  AWS_REGION: us-west-2
+  AWS_REGION: us-east-1
   
 jobs:
   terraform:
     name: 'Terraform ${{ github.event.inputs.action }}'
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+
     
     defaults:
       run:
         shell: bash
-        working-directory: ./terraform
+        working-directory: ./iac
     
     steps:
     - name: Checkout
@@ -103,7 +103,7 @@ jobs:
         
         # Store bucket name in Parameter Store
         aws ssm put-parameter \
-          --name "/terraform/${{ github.event.inputs.environment }}/s3-bucket-name" \
+          --name "s3-bucket-name" \
           --value "$BUCKET_NAME" \
           --type "String" \
           --overwrite
@@ -113,7 +113,7 @@ jobs:
       if: github.event.inputs.action == 'destroy'
       run: |
         # 1. Fetch the terraform state file from the S3 bucket into relevant directory
-        BUCKET_NAME=$(aws ssm get-parameter --name "/terraform/${{ github.event.inputs.environment }}/s3-bucket-name" --query "Parameter.Value" --output text)
+        BUCKET_NAME=$(aws ssm get-parameter --name "s3-bucket-name" --query "Parameter.Value" --output text)
         aws s3 cp s3://$BUCKET_NAME/terraform.tfstate terraform.tfstate || echo "State file not found"
 
     - name: Terraform Destroy Plan
