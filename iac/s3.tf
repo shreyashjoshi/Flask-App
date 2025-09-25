@@ -71,7 +71,9 @@
 #     }
 #   }
 #}
-
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+ }
 
 module "s3_bucket" {
   source = "terraform-aws-modules/s3-bucket/aws"
