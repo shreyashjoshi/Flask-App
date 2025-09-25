@@ -1,0 +1,15 @@
+image:
+  repository: your-registry/flask-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 5000
+
+app:
+  name: flask-app
+  port: 5000

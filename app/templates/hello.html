@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Hello World - Flask App{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-100">
+    <div class="col-md-8 col-lg-6">
+        <div class="card text-center">
+            <div class="card-header bg-success text-white">
+                <h2 class="mb-0">🎉 Welcome!</h2>
+            </div>
+            <div class="card-body p-5">
+                <h1 class="display-4 text-primary mb-4">Hello, World!</h1>
+                <h3 class="text-muted mb-4">Welcome, <span class="text-success">{{ username }}</span>!</h3>
+                <p class="lead">You have successfully logged in to our Flask application.</p>
+                <hr class="my-4">
+                <p class="mb-4">This is a simple "Hello World" Flask app with user authentication.</p>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-lg">
+                    🚪 Logout
+                </a>
+            </div>
+            <div class="card-footer text-muted">
+                <small>Session active for user: {{ username }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

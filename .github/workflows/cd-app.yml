@@ -1,0 +1,39 @@
+name: CD App Deployment
+
+on:
+  push:
+    paths:
+      - 'app/helm-chart/**'
+
+env:
+  AWS_REGION: us-west-2
+
+jobs:
+  deploy-app:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Fetch kubeconfig from S3 bucket
+      run: |
+        BUCKET_NAME=$(aws ssm get-parameter --name "/terraform/dev/s3-bucket-name" --query "Parameter.Value" --output text)
+        aws s3 cp s3://$BUCKET_NAME/kubeconfig ~/.kube/config
+        chmod 600 ~/.kube/config
+
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: '3.12.0'
+
+    - name: Deploy app to Kubernetes cluster
+      run: |
+        helm upgrade --install flask-app ./app/helm-chart/flask-app

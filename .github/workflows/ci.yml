@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Login to Docker Hub
+      if: github.event_name == 'push'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./app
+        push: ${{ github.event_name == 'push' }}
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/flask-hello-world:v1.0.${{ github.run_number }}
+
+    - name: Update Helm chart image and push to repo
+      if: github.event_name == 'push'
+      run: |
+        sed -i "s|repository: .*|repository: ${{ secrets.DOCKERHUB_USERNAME }}/flask-hello-world|g" app/helm-chart/flask-app/values.yaml
+        sed -i "s|tag: .*|tag: v1.0.${{ github.run_number }}|g" app/helm-chart/flask-app/values.yaml
+        
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add app/helm-chart/flask-app/values.yaml
+        git commit -m "Update Helm chart image to v1.0.${{ github.run_number }}"
+        git push

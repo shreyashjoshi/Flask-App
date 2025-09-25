@@ -1,0 +1,135 @@
+name: Terraform Infrastructure Management
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+        - plan
+        - apply
+        - destroy
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+        - dev
+        - staging
+        - prod
+
+env:
+  AWS_REGION: us-west-2
+  
+jobs:
+  terraform:
+    name: 'Terraform ${{ github.event.inputs.action }}'
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+    
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.0
+
+    - name: Terraform Format Check
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    - name: Terraform Init
+      id: init
+      run: terraform init
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+
+    - name: Terraform Plan
+      id: plan
+      if: github.event.inputs.action == 'plan' || github.event.inputs.action == 'apply'
+      run: |
+        terraform plan -no-color -input=false -out=tfplan
+        terraform show -no-color tfplan
+      continue-on-error: false
+
+    - name: Terraform Apply
+      id: apply
+      if: github.event.inputs.action == 'apply'
+      run: |
+        # 1. Create EKS resource and S3 Bucket
+        terraform apply -auto-approve tfplan
+        echo "Infrastructure has been successfully applied!"
+
+    - name: Store kubeconfig to S3 bucket
+      id: store-kubeconfig
+      if: github.event.inputs.action == 'apply' && steps.apply.outcome == 'success'
+      run: |
+        # 2. Create S3 Bucket (already created in step 1)
+        # 3. Store kubeconfig to S3 bucket
+        CLUSTER_NAME=$(terraform output -raw cluster_name)
+        BUCKET_NAME=$(terraform output -raw config_bucket_name)
+        
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name $CLUSTER_NAME --kubeconfig ./kubeconfig
+        aws s3 cp ./kubeconfig s3://$BUCKET_NAME/kubeconfig --server-side-encryption AES256
+
+    - name: Store Terraform state file to S3 Bucket
+      id: store-state
+      if: github.event.inputs.action == 'apply' && steps.apply.outcome == 'success'
+      run: |
+        # 4. Store Terraform state file to this S3 Bucket
+        BUCKET_NAME=$(terraform output -raw config_bucket_name)
+        aws s3 cp terraform.tfstate s3://$BUCKET_NAME/terraform.tfstate --server-side-encryption AES256
+        
+        # Store bucket name in Parameter Store
+        aws ssm put-parameter \
+          --name "/terraform/${{ github.event.inputs.environment }}/s3-bucket-name" \
+          --value "$BUCKET_NAME" \
+          --type "String" \
+          --overwrite
+
+    - name: Fetch terraform state file from S3 bucket
+      id: fetch-state
+      if: github.event.inputs.action == 'destroy'
+      run: |
+        # 1. Fetch the terraform state file from the S3 bucket into relevant directory
+        BUCKET_NAME=$(aws ssm get-parameter --name "/terraform/${{ github.event.inputs.environment }}/s3-bucket-name" --query "Parameter.Value" --output text)
+        aws s3 cp s3://$BUCKET_NAME/terraform.tfstate terraform.tfstate || echo "State file not found"
+
+    - name: Terraform Destroy Plan
+      id: destroy-plan
+      if: github.event.inputs.action == 'destroy'
+      run: |
+        terraform plan -destroy -no-color -input=false -out=tfplan-destroy
+        terraform show -no-color tfplan-destroy
+      continue-on-error: false
+
+    - name: Terraform Destroy
+      id: destroy
+      if: github.event.inputs.action == 'destroy'
+      run: |
+        # 2. Delete all the terraform resources as per state file
+        terraform apply -auto-approve tfplan-destroy
+        echo "Infrastructure has been successfully destroyed!"
+
+ 
