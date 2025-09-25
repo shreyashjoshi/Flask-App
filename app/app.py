@@ -6,9 +6,7 @@ app.secret_key = 'your-secret-key-change-this-in-production'
 
 # Simple user database (in production, use a real database)
 users = {
-    'admin': generate_password_hash('password123'),
-    'user1': generate_password_hash('mypassword'),
-    'demo': generate_password_hash('demo123')
+    'hire-me@anshumat.org': generate_password_hash('HireMe@2025!')
 }
 
 @app.route('/')
