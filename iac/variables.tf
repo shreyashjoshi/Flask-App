@@ -1,10 +1,10 @@
 # variables.tf
 # Define input variables for your Terraform configuration here.
-
-variable "vpc_name" {
+var
+variable "cluster_name" {
   description = "Name of the VPC"
   type        = string
-  default     = "my-vpc"
+  default     = "cluster-1"
 }
 
 variable "cidr_block" {
