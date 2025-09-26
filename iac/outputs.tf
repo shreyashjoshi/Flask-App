@@ -40,6 +40,6 @@ output "cluster_arn" {
 # S3 Bucket Outputs
 output "config_bucket_name" {
   description = "Name of the S3 bucket for storing config files"
-  value       = module.s3_bucket.bucket
+  value       = module.s3_bucket.bucket.id
 }
 
