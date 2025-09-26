@@ -3,7 +3,7 @@
 variable "cluster_name" {
   description = "Name of the cluster"
   type        = string
-  default     = "cluster-1"
+  default     = "cluster-2"
 }
 
 variable "vpc_name" {
