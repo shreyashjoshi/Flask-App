@@ -6,6 +6,12 @@ variable "cluster_name" {
   default     = "cluster-1"
 }
 
+variable "vpc_name" {
+  description = "Name of the VPC"
+  type        = string
+  default     = "my-vpc"
+}
+
 variable "cidr_block" {
   description = "CIDR block for the VPC"
   type        = string
