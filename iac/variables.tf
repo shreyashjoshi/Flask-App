@@ -1,8 +1,7 @@
 # variables.tf
 # Define input variables for your Terraform configuration here.
-var
 variable "cluster_name" {
-  description = "Name of the VPC"
+  description = "Name of the cluster"
   type        = string
   default     = "cluster-1"
 }
