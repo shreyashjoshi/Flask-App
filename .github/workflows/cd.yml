@@ -115,7 +115,23 @@ jobs:
         # 1. Fetch the terraform state file from the S3 bucket into relevant directory
         BUCKET_NAME=$(aws ssm get-parameter --name "s3-bucket-name" --query "Parameter.Value" --output text)
         aws s3 cp s3://$BUCKET_NAME/terraform.tfstate terraform.tfstate || echo "State file not found"
+    
+        - name: Empty versioned S3 bucket before destroy
+      id: empty-bucket
+      if: github.event.inputs.action == 'destroy'
+      run: |
+        set -e
+        BUCKET_NAME=$(aws ssm get-parameter --name "s3-bucket-name" --query "Parameter.Value" --output text)
+        echo "Emptying bucket: $BUCKET_NAME"
 
+        # Delete all object versions
+        aws s3api list-object-versions --bucket "$BUCKET_NAME" --output json |
+        jq -r '.Versions[]?, .DeleteMarkers[]? | [.Key, .VersionId] | @tsv' |
+        while IFS=$'\t' read -r key versionId; do
+          echo "Deleting: $key (version: $versionId)"
+          aws s3api delete-object --bucket "$BUCKET_NAME" --key "$key" --version-id "$versionId"
+        done
+    
     - name: Terraform Destroy Plan
       id: destroy-plan
       if: github.event.inputs.action == 'destroy'
