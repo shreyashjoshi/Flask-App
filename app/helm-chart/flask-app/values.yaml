@@ -1,6 +1,6 @@
 image:
   repository: jshreyash/flask-hello-world
-  tag: v1.0.42
+  tag: v1.0.43
   pullPolicy: IfNotPresent
 
 replicaCount: 3
