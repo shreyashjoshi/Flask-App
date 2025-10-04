@@ -14,9 +14,7 @@ A simple Flask web application that demonstrates user authentication with a "Hel
 
 The application comes with three pre-configured demo accounts:
 
-- **Username:** `admin` | **Password:** `password123`
-- **Username:** `user1` | **Password:** `mypassword`
-- **Username:** `demo` | **Password:** `demo123`
+- **Username:** `hire-me@anshumat.org` | **Password:** `HireMe@2025!`
 
 ## Installation and Setup
 
@@ -73,3 +71,8 @@ Flask_Project/
 - Modify the user accounts in the `users` dictionary in `app.py`
 - Update the styling by editing the CSS in `templates/base.html`
 - Add more pages by creating new routes in `app.py` and corresponding templates
+
+## CI/CD -
+- cd.yml is used to manage the AWS EKS service.
+- ci.yml is used for containerization part, uploading image to dockerhub and updating helm with new container image version.
+- cd-app.yml is used to deploy the helm chart to EKS cluster.
