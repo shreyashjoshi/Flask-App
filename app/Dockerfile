@@ -38,15 +38,11 @@ WORKDIR /app
 COPY app.py .
 COPY templates/ templates/
 
-# Create non-root user (distroless uses nonroot user by default)
-USER nonroot
+
 
 # Expose port
 EXPOSE 5000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:5000/login', timeout=3)" || exit 1
 
 # Run the application
 CMD ["python","app.py"]
