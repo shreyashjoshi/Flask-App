@@ -20,7 +20,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Stage 2: Production stage using distroless
-FROM gcr.io/distroless/python3-debian12
+FROM python:3.11-slim
 
 # Copy the virtual environment from builder stage
 COPY --from=builder /opt/venv /opt/venv
@@ -49,4 +49,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:5000/login', timeout=3)" || exit 1
 
 # Run the application
-CMD ["app.py"]
+CMD ["python","app.py"]
