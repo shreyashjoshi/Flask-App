@@ -1,9 +1,14 @@
 name: CD App Deployment
 
 on:
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+
+  # Auto trigger on changes to Helm chart files
   push:
     paths:
       - 'app/helm-chart/**'
+
 
 env:
   AWS_REGION: us-east-1

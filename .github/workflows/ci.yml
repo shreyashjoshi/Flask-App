@@ -1,10 +1,21 @@
 name: CI
 
 on:
+  workflow_dispatch:  # Manual trigger
+
   push:
     branches: [ main, master ]
+    paths:
+      - 'app/templates/**'
+      - 'app/app.py'
+      - 'app/Dockerfile'
+
   pull_request:
     branches: [ main, master ]
+    paths:
+      - 'app/templates/**'
+      - 'app/app.py'
+      - 'app/Dockerfile'
 
 permissions:
   contents: write  # Needed to update the helm chart values file.    
