@@ -8,7 +8,10 @@ A simple Flask web application that demonstrates user authentication with a "Hel
 - Login/logout functionality
 - Session management
 - Bootstrap-styled responsive UI
-- Flash messaging for user feedback
+
+
+## Login Procedure
+- Service type loadbalancer in kubernetes will deploy a loadbalancer in AWS.Login to APP using the loadbalancer url/DNS in your respective aws account
 
 ## Demo Accounts
 
@@ -16,26 +19,7 @@ The application comes with three pre-configured demo accounts:
 
 - **Username:** `hire-me@anshumat.org` | **Password:** `HireMe@2025!`
 
-## Installation and Setup
 
-1. **Install Python** (if not already installed)
-   - Download from https://python.org
-   - Make sure Python 3.7+ is installed
-
-2. **Install dependencies:**
-   ```powershell
-   pip install -r requirements.txt
-   ```
-
-3. **Run the application:**
-   ```powershell
-   python app.py
-   ```
-
-4. **Open your browser and go to:**
-   ```
-   http://localhost:5000
-   ```
 
 ## 📁 Flask-App-main Repository Structure
 
