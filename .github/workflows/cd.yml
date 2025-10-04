@@ -116,7 +116,7 @@ jobs:
         BUCKET_NAME=$(aws ssm get-parameter --name "s3-bucket-name" --query "Parameter.Value" --output text)
         aws s3 cp s3://$BUCKET_NAME/terraform.tfstate terraform.tfstate || echo "State file not found"
     
-        - name: Empty versioned S3 bucket before destroy
+    - name: Empty versioned S3 bucket before destroy
       id: empty-bucket
       if: github.event.inputs.action == 'destroy'
       run: |
