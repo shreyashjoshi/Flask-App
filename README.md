@@ -114,3 +114,6 @@ Flask-App-main/
 - cd.yml is used to manage the AWS EKS service.
 - ci.yml is used for containerization part, uploading image to dockerhub and updating helm with new container image version.
 - cd-app.yml is used to deploy the helm chart to EKS cluster.
+
+## In-Progress Work
+- Add deployemnt of app which is done via helm chart using Terraform.
