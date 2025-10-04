@@ -37,17 +37,55 @@ The application comes with three pre-configured demo accounts:
    http://localhost:5000
    ```
 
-## File Structure
+## 📁 Flask-App-main Repository Structure
 
 ```
-Flask_Project/
-├── app.py              # Main Flask application
-├── requirements.txt    # Python dependencies
-├── README.md          # This file
-└── templates/         # HTML templates
-    ├── base.html      # Base template
-    ├── login.html     # Login page
-    └── hello.html     # Hello World page
+Flask-App-main/
+│
+├── 📁 .github/
+│   └── 📁 workflows/
+│       ├── 📄 cd.yml                    # Infrastructure CI/CD Pipeline
+│       └── 📄 cd-app.yml               # Application CI/CD Pipeline
+│
+├── 📁 app/                              # Flask Application Layer
+│   ├── 📄 app.py                       # Main Flask Application
+│   ├── 📄 Dockerfile                   # Multi-stage Docker Build
+│   ├── 📄 requirements.txt             # Python Dependencies
+│   │
+│   ├── 📁 templates/                   # HTML Templates
+│   │   ├── 📄 base.html               # Base Template (Bootstrap)
+│   │   ├── 📄 login.html              # Login Page
+│   │   └── 📄 hello.html              # Dashboard Page
+│   │
+│   ├── 📁 helm-chart/                  # Kubernetes Helm Chart
+│   │   └── 📁 flask-app/
+│   │       ├── 📄 Chart.yaml          # Helm Chart Metadata
+│   │       ├── 📄 values.yaml         # Default Helm Values
+│   │       └── 📁 templates/
+│   │           ├── 📄 deployment.yaml # Kubernetes Deployment
+│   │           └── 📄 service.yaml    # Kubernetes Service
+│   │
+│   └── 📁 terraform/                   # Application Terraform
+│      
+│    
+│       
+│       
+│       
+│      
+│       
+│
+├── 📁 iac/                             # Infrastructure as Code
+│   ├── 📄 EKS.tf                      # EKS Cluster Configuration
+│   ├── 📄 vpc.tf                      # VPC Network Configuration
+│   ├── 📄 s3.tf                       # S3 Bucket Configuration
+│   ├── 📄 helm-deployment.tf          # Helm Deployment Config
+│   ├── 📄 providers.tf                # Terraform Providers
+│   ├── 📄 variables.tf                # Infrastructure Variables
+│   ├── 📄 outputs.tf                  # Infrastructure Outputs
+│   ├── 📄 terraform.tf                # Terraform Configuration
+│   └── 📄 versions.tf                 # Version Constraints
+│
+└── 📄 README.md                        # Main Project Documentation
 ```
 
 ## How it Works
